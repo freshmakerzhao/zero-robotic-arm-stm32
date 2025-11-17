@@ -153,7 +153,8 @@ void robot_uart1_handle(struct robot_cmd *rb_cmd)
 	float param[6] = {0};
 	char *cmd = rb_cmd->cmd;
 	int ret;
-
+	
+	LOG("[TEXT zhaoshuai] 6\n");
 	ret = sscanf(cmd, "%19s %f %f %f %f %f %f", event_type, &param[0], &param[1], &param[2], 
 		&param[3], &param[4], &param[5]);
 	if (ret < 1) { // 解析失败
@@ -161,7 +162,9 @@ void robot_uart1_handle(struct robot_cmd *rb_cmd)
         return;
     }
 
+	LOG("[TEXT zhaoshuai] 7\n");
 	for (int i = 0; robot_uart1_cmd_table[i].event_type != NULL; i++) {
+		LOG("[TEXT zhaoshuai] 9\n");
 		if (strcmp(event_type, robot_uart1_cmd_table[i].event_type) == 0) {
 			ret = robot_uart1_cmd_table[i].cmd_func(param);
 			if (ret != pdPASS) {

@@ -29,6 +29,7 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "esp8266_mqtt.h"
+#include "motor_test.h"  // 测试电机
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -109,6 +110,43 @@ int main(void)
 	  Error_Handler();
   }
 
+// ========== 电机测试代码开始 ==========
+  char buf[100];
+  
+  HAL_UART_Transmit(&huart1, (uint8_t*)"\r\n\r\n", 4, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart1, (uint8_t*)"========================================\r\n", 42, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart1, (uint8_t*)"  Motor & Driver Connection Test Start  \r\n", 44, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart1, (uint8_t*)"========================================\r\n", 42, HAL_MAX_DELAY);
+  
+  // 延时，等待系统稳定
+  HAL_Delay(500);
+  
+  // 测试电机地址1
+  uint8_t test_motor_addr = 1;
+  
+  sprintf(buf, "\r\nPreparing to test 中文测试motor address: %d\r\n", test_motor_addr);
+  HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), HAL_MAX_DELAY);
+  HAL_Delay(100);
+  
+  // 执行完整测试
+  int result = Motor_Test_Complete(test_motor_addr);
+  
+  if (result == 0) {
+      sprintf(buf, "\r\n[PASS] Motor %d - All tests passed!\r\n", test_motor_addr);
+      HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), HAL_MAX_DELAY);
+  } else {
+      sprintf(buf, "\r\n[FAIL] Motor %d - %d test(s) failed\r\n", test_motor_addr, result);
+      HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), HAL_MAX_DELAY);
+  }
+  
+  HAL_UART_Transmit(&huart1, (uint8_t*)"\r\n========================================\r\n", 44, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart1, (uint8_t*)"  Test Done, Starting FreeRTOS Scheduler \r\n", 45, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart1, (uint8_t*)"========================================\r\n\r\n", 46, HAL_MAX_DELAY);
+  
+  HAL_Delay(500);
+  // ========== 电机测试代码结束 ==========
+
+
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -127,7 +165,6 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
